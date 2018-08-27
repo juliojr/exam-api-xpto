@@ -2,13 +2,15 @@ package com.xpto.cities.model;
 
 import java.math.BigDecimal;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-//@Document(collection = "domain")
+@Document(collection = "cities")
 public class CityModel {
-	
-	//fiels of csv file
-	//ibge_id,uf,name,capital,lon,lat,no_accents,alternative_names,microregion,mesoregion
-//	@Id
+
+	// fiels of csv file
+	// ibge_id,uf,name,capital,lon,lat,no_accents,alternative_names,microregion,mesoregion
+	@Id
 	private Long ibgeId;
 	private String uf;
 	private String name;
@@ -21,66 +23,106 @@ public class CityModel {
 	private String mesoregion;
 	
 	
+
+	public CityModel() {
+		super();
+	}
+
+	public CityModel(Long ibgeId, String uf, String name, String capital, BigDecimal lon, BigDecimal lat,
+			String noAccents, String alternativeNames, String microregion, String mesoregion) {
+		super();
+		this.ibgeId = ibgeId;
+		this.uf = uf;
+		this.name = name;
+		this.capital = capital;
+		this.lon = lon;
+		this.lat = lat;
+		this.noAccents = noAccents;
+		this.alternativeNames = alternativeNames;
+		this.microregion = microregion;
+		this.mesoregion = mesoregion;
+	}
+
 	public Long getIbgeId() {
 		return ibgeId;
 	}
+
 	public void setIbgeId(Long ibgeId) {
 		this.ibgeId = ibgeId;
 	}
+
 	public String getUf() {
 		return uf;
 	}
+
 	public void setUf(String uf) {
 		this.uf = uf;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public String getCapital() {
 		return capital;
 	}
+
 	public void setCapital(String capital) {
 		this.capital = capital;
 	}
+
 	public BigDecimal getLon() {
 		return lon;
 	}
+
 	public void setLon(BigDecimal lon) {
 		this.lon = lon;
 	}
+
 	public BigDecimal getLat() {
 		return lat;
 	}
+
 	public void setLat(BigDecimal lat) {
 		this.lat = lat;
 	}
+
 	public String getNoAccents() {
 		return noAccents;
 	}
+
 	public void setNoAccents(String noAccents) {
 		this.noAccents = noAccents;
 	}
+
 	public String getAlternativeNames() {
 		return alternativeNames;
 	}
+
 	public void setAlternativeNames(String alternativeNames) {
 		this.alternativeNames = alternativeNames;
 	}
+
 	public String getMicroregion() {
 		return microregion;
 	}
+
 	public void setMicroregion(String microregion) {
 		this.microregion = microregion;
 	}
+
 	public String getMesoregion() {
 		return mesoregion;
 	}
+
 	public void setMesoregion(String mesoregion) {
 		this.mesoregion = mesoregion;
 	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -97,6 +139,7 @@ public class CityModel {
 		result = prime * result + ((uf == null) ? 0 : uf.hashCode());
 		return result;
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -158,12 +201,12 @@ public class CityModel {
 			return false;
 		return true;
 	}
+
 	@Override
 	public String toString() {
 		return "CityModel [ibgeId=" + ibgeId + ", uf=" + uf + ", name=" + name + ", capital=" + capital + ", lon=" + lon
 				+ ", lat=" + lat + ", noAccents=" + noAccents + ", alternativeNames=" + alternativeNames
 				+ ", microregion=" + microregion + ", mesoregion=" + mesoregion + "]";
 	}
-	
-	
+
 }
