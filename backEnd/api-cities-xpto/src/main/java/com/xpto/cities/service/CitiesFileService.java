@@ -2,7 +2,6 @@ package com.xpto.cities.service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -13,14 +12,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.xpto.cities.exception.CitiesFileException;
-import com.xpto.cities.exception.CitiesFileNotFoundException;
 import com.xpto.cities.model.CityModel;
 import com.xpto.cities.property.CitiesFileProperties;
 
@@ -28,6 +24,9 @@ import com.xpto.cities.property.CitiesFileProperties;
 public class CitiesFileService {
 
 	private final Path citiesFileLocation;
+	
+	@Autowired
+	private CityService cityService;
 
 	@Autowired
 	public CitiesFileService(CitiesFileProperties citiesFileProperties) {
@@ -59,10 +58,15 @@ public class CitiesFileService {
 			Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
 			// repository
+
+			List<CityModel> cities = getCitiesByFile(file);
+			System.out.println(cities);
 			
-			 System.out.println(getCitiesByFile(file));		
+			cityService.saveAllCities(cities);
 			
-			return fileName;
+			Files.delete(this.citiesFileLocation.resolve(file.getOriginalFilename().trim()).normalize());
+			String message = cities.size() + " Cidades Inseridas com sucesso";
+			return message;
 		} catch (IOException ex) {
 			throw new CitiesFileException(
 					"Não foi possível armazenar o arquivo" + fileName + ". Por favor, tente novamente!", ex);
@@ -71,13 +75,13 @@ public class CitiesFileService {
 
 	public List<CityModel> getCitiesByFile(MultipartFile file) {
 		List<CityModel> cities = null;
-		try (Stream<String> lines = Files.lines(this.citiesFileLocation.resolve(file.getOriginalFilename().trim()).normalize())) {
+		try (Stream<String> lines = Files
+				.lines(this.citiesFileLocation.resolve(file.getOriginalFilename().trim()).normalize())) {
 			cities = lines.skip(1).map(mapToCity).collect(Collectors.toList());
-
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			throw new CitiesFileException(
+					"Desculpe, não foi possivel converter o arquivo, verifique e tente novamente!");
 		}
-
 		return cities;
 	}
 
@@ -86,19 +90,5 @@ public class CitiesFileService {
 		return new CityModel(new Long(c[0]), c[1], c[2], c[3], new BigDecimal(c[4]), new BigDecimal(c[4]), c[6], c[7],
 				c[8], c[9]);
 	};
-
-	public Resource loadFileAsResource(String fileName) {
-		try {
-			Path filePath = this.citiesFileLocation.resolve(fileName.trim()).normalize();
-			Resource resource = new UrlResource(filePath.toUri());
-			if (resource.exists()) {
-				return resource;
-			} else {
-				throw new CitiesFileNotFoundException("Arquivo não encontrado" + fileName);
-			}
-		} catch (MalformedURLException ex) {
-			throw new CitiesFileNotFoundException("Arquivo não encontrado " + fileName, ex);
-		}
-	}
 
 }

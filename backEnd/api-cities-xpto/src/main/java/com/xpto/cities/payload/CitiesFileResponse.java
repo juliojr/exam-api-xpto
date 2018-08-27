@@ -1,35 +1,25 @@
 package com.xpto.cities.payload;
 
 public class CitiesFileResponse {
-	private String fileName;
-    private String fileDownloadUri;
+    private String message;
     private String fileType;
     private long size;
 
-    public CitiesFileResponse(String fileName, String fileDownloadUri, String fileType, long size) {
-        this.fileName = fileName;
-        this.fileDownloadUri = fileDownloadUri;
+    public CitiesFileResponse( String message, String fileType, long size) {
+        this.message = message;
         this.fileType = fileType;
         this.size = size;
     }
+    
+	public String getMessage() {
+		return message;
+	}
 
-    public String getFileName() {
-        return fileName;
-    }
+	public void setMessage(String message) {
+		this.message = message;
+	}
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public String getFileDownloadUri() {
-        return fileDownloadUri;
-    }
-
-    public void setFileDownloadUri(String fileDownloadUri) {
-        this.fileDownloadUri = fileDownloadUri;
-    }
-
-    public String getFileType() {
+	public String getFileType() {
         return fileType;
     }
 
