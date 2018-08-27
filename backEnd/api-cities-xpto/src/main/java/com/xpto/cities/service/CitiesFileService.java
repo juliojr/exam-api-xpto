@@ -37,13 +37,17 @@ public class CitiesFileService {
 
 	    public String storeFile(MultipartFile file) {
 	        // Normalize file name
-	        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+	        String fileName = StringUtils.cleanPath(file.getOriginalFilename().trim());
 
 	        try {
 	            // Check if the file's name contains invalid characters
 	            if(fileName.contains("..")) {
 	                throw new CitiesFileException("Desculpa! O nome do arquivo contém um caminho inválido " + fileName);
 	            }
+	            if(!file.getContentType().equals("text/csv")) {
+	            	throw new CitiesFileException("Desculpa! O tipo do arquivo não é suportado, insira arquivos .csv - " + fileName);
+	            }
+	            
 
 	            // Copy file to the target location (Replacing existing file with the same name)
 	            Path targetLocation = this.citiesFileLocation.resolve(fileName);
@@ -56,7 +60,7 @@ public class CitiesFileService {
 
 	    public Resource loadFileAsResource(String fileName) {
 	        try {
-	            Path filePath = this.citiesFileLocation.resolve(fileName).normalize();
+	            Path filePath = this.citiesFileLocation.resolve(fileName.trim()).normalize();
 	            Resource resource = new UrlResource(filePath.toUri());
 	            if(resource.exists()) {
 	                return resource;

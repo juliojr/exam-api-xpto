@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,7 +25,6 @@ import com.xpto.cities.payload.CitiesFileResponse;
 import com.xpto.cities.service.CitiesFileService;
 
 @RestController
-@RequestMapping("/city")
 public class CityContoller {
 
 	private static final Logger logger = LoggerFactory.getLogger(CityContoller.class);
@@ -36,12 +34,14 @@ public class CityContoller {
 
 	@PostMapping("/uploadFile")
 	public CitiesFileResponse uploadFile(@RequestParam("file") MultipartFile file) {
-		String fileName = citiesFileService.storeFile(file);
+		
+			String fileName = citiesFileService.storeFile(file);
 
-		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
-				.path(fileName).toUriString();
+			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
+					.path(fileName).toUriString();
 
-		return new CitiesFileResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
+			return new CitiesFileResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
+		
 	}
 
 	@PostMapping("/uploadMultipleFiles")
