@@ -60,10 +60,7 @@ public class CitiesFileService {
 			// repository
 
 			List<CityModel> cities = getCitiesByFile(file);
-			System.out.println(cities);
-			
 			cityService.saveAllCities(cities);
-			
 			Files.delete(this.citiesFileLocation.resolve(file.getOriginalFilename().trim()).normalize());
 			String message = cities.size() + " Cidades Inseridas com sucesso";
 			return message;
@@ -87,7 +84,7 @@ public class CitiesFileService {
 
 	public static Function<String, CityModel> mapToCity = (line) -> {
 		String[] c = line.split(",");
-		return new CityModel(new Long(c[0]), c[1], c[2], c[3], new BigDecimal(c[4]), new BigDecimal(c[4]), c[6], c[7],
+		return new CityModel(new Long(c[0]), c[1], c[2], c[3], new BigDecimal(c[4]), new BigDecimal(c[5]), c[6], c[7],
 				c[8], c[9]);
 	};
 

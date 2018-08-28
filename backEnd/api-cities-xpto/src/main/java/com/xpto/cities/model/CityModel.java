@@ -2,27 +2,42 @@ package com.xpto.cities.model;
 
 import java.math.BigDecimal;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
-@Document(collection = "cities")
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+@Entity
+@Table(name = "cities")
+@EntityListeners(AuditingEntityListener.class)
 public class CityModel {
-
-	// fiels of csv file
-	// ibge_id,uf,name,capital,lon,lat,no_accents,alternative_names,microregion,mesoregion
 	@Id
 	private Long ibgeId;
+	@NotBlank
 	private String uf;
+	@NotBlank
 	private String name;
 	private String capital;
+	@NotNull
+	@Digits(integer = 10, fraction = 10)
 	private BigDecimal lon;
+	@NotNull
+	@Digits(integer = 10, fraction = 10)
 	private BigDecimal lat;
+	@NotBlank
+	@Column(name = "no_accents")
 	private String noAccents;
 	private String alternativeNames;
+	@NotBlank
 	private String microregion;
+	@NotBlank
 	private String mesoregion;
-	
-	
 
 	public CityModel() {
 		super();
