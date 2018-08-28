@@ -6,7 +6,7 @@
 
 	<groupId>com.xpto</groupId>
 	<artifactId>api-cities-xpto</artifactId>
-	<version>1.0 B</version>
+	<version>1.0</version>
 	<packaging>jar</packaging>
 
 	<name>api-cities-xpto</name>
