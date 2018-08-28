@@ -28,30 +28,7 @@ public class CityTests {
 		//repo.save(city);
 		//List<CityModel> cities = findAll(); 
 		//List<CityModel> cities = getCapitais();
-		List<CityModel> cities = repo.findAll();
-		
-		double maiorDistancia = 0;
-		CityModel cA = null;
-		CityModel cB = null;
-		for(CityModel c : cities) {
-			for(CityModel c1 : cities) {
-				if(!c1.equals(c)) {
-					double aux = serv.getDistance(c.getLat().doubleValue(), c.getLon().doubleValue(), c1.getLat().doubleValue(), c1.getLon().doubleValue(), "K");
-					if(aux > maiorDistancia) {
-						maiorDistancia = aux;
-						cA = c;
-						cB = c1;
-					}
-				}
-			}
-			System.out.println(cA);
-			System.out.println(cB);
-			System.out.println(maiorDistancia);
-		}
-		System.out.println(cA);
-		System.out.println(cB);
-		System.out.println(maiorDistancia);
-
+		//List<CityModel> cities = repo.findAll();
 	}
 
 	@SuppressWarnings("unused")
