@@ -1,13 +1,12 @@
 package com.xpto.cities.controller;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 import javax.validation.Valid;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,110 +19,106 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.xpto.cities.model.CityModel;
-import com.xpto.cities.payload.CitiesFileResponse;
-import com.xpto.cities.payload.CitiesResponse;
-import com.xpto.cities.payload.StatesDto;
-import com.xpto.cities.service.CitiesFileService;
-import com.xpto.cities.service.CityService;
+import com.xpto.cities.payload.DefaultResponse;
+import com.xpto.cities.payload.FileResponse;
+import com.xpto.cities.service.ICitiesFileService;
+import com.xpto.cities.service.ICityService;
 
 @RestController
 public class CityContoller {
 
 	@Autowired
-	private CitiesFileService citiesFileService;
+	private ICitiesFileService citiesFileService;
 
 	@Autowired
-	private CityService cityService;
-
-	private final Logger LOG = LoggerFactory.getLogger(getClass());
+	private ICityService cityService;
 
 	/*
 	 * Ler o arquivo CSV das cidades para a base de dados
 	 */
-	@PostMapping("/uploadFile")
-	public CitiesFileResponse uploadFile(@RequestParam("file") MultipartFile file) {
-		LOG.info("Uploading all cities in mongodb please wait.");
-		return new CitiesFileResponse(citiesFileService.storeFile(file), file.getContentType(), file.getSize());
+	@PostMapping("/upload")
+	public ResponseEntity<FileResponse> uploadFile(@RequestParam("file") MultipartFile file) {
+		return new ResponseEntity<FileResponse>(citiesFileService.storeFile(file), HttpStatus.ACCEPTED);
 	}
 
 	/*
 	 * Retornar somente as cidades que são capitais ordenadas por nome
 	 */
-	@GetMapping("/capitals")
-	public ResponseEntity<CitiesResponse> getCapitals() {
-		LOG.info("Loading all capitals sorted by name.");
-		List<CityModel> cities = cityService.findCapitals();
-		CitiesResponse response = new CitiesResponse("capitals", cities);
-		return new ResponseEntity<CitiesResponse>(response, HttpStatus.OK);
+	@GetMapping("/capital")
+	public ResponseEntity<DefaultResponse> getCapitals() {
+		DefaultResponse response = cityService.findCapitals();
+		return new ResponseEntity<DefaultResponse>(response, response.getStatus());
+
 	}
+
 	/*
 	 * Retornar o nome do estado com a maior e menor quantidade de cidades e a
 	 * quantidade de cidades;
 	 */
-	@GetMapping("/largerAndSmallerUf")
-	public ResponseEntity<List<StatesDto>> getLargerAndSmallerOfUfs() {
-		return new ResponseEntity<List<StatesDto>>(cityService.getLargestAndSmallestOfUfs(), HttpStatus.OK);
+	@GetMapping("/largest-smallest-ufs")
+	public ResponseEntity<DefaultResponse> getLargestSmallestUfs() {
+		DefaultResponse response = cityService.getLargestSmallestUfs();
+		return new ResponseEntity<DefaultResponse>(response, response.getStatus());
+
 	}
 
 	/*
 	 * Retornar a quantidade de cidades por estado;
 	 */
-	@GetMapping("/qtdeCitiesUf")
-	public ResponseEntity<List<StatesDto>> getQtdeCitiesUf() {
-		LOG.info("Loading cities per state.");
-		return new ResponseEntity<List<StatesDto>>(cityService.getQtdeCitiesUf(), HttpStatus.OK);
+	@GetMapping("/number-cities-uf")
+	public ResponseEntity<DefaultResponse> getNumberCitiesUf() {
+		DefaultResponse response = cityService.getNumberCitiesUf();
+		return new ResponseEntity<DefaultResponse>(response, response.getStatus());
 	}
 
 	/*
 	 * Obter os dados da cidade informando o id do IBGE
 	 */
-	@GetMapping("/cityByIbge/{ibgeId}")
-	public ResponseEntity<Optional<CityModel>> getCityByIbge(@PathVariable("ibgeId") Long ibgeId) {
-		LOG.info("Loading city by ibge_id.");
-		return new ResponseEntity<Optional<CityModel>>(cityService.findById(ibgeId), HttpStatus.OK);
+	@GetMapping("/city/{ibgeId}")
+	public ResponseEntity<DefaultResponse> getCityByIbge(@PathVariable("ibgeId") Long ibgeId) {
+		DefaultResponse response = cityService.findByIbgeId(ibgeId);
+		return new ResponseEntity<DefaultResponse>(response, response.getStatus());
 	}
 
 	/*
 	 * Retornar o nome das cidades baseado em um estado selecionado;
 	 */
-	@GetMapping("/citiesByUf/{uf}")
-	public ResponseEntity<List<String>> getCitiesByUf(@PathVariable("uf") String uf) {
-		LOG.info("Loading cities by uf.");
-		List<String> cities = cityService.getCitiesByUf(uf);
-		return new ResponseEntity<List<String>>(cities, HttpStatus.OK);
+	@GetMapping("/uf/{uf}")
+	public ResponseEntity<DefaultResponse> getCitiesByUf(@PathVariable("uf") String uf) {
+		DefaultResponse response = cityService.getCitiesByUf(uf.toUpperCase());
+		return new ResponseEntity<DefaultResponse>(response, response.getStatus());
 	}
 
 	/*
 	 * Permitir adicionar uma nova Cidade
 	 */
-	@PostMapping("/saveCity")
-	public ResponseEntity<CityModel> saveCity(@Valid @RequestBody CityModel city) {
-		LOG.info("saving a city");
-		return new ResponseEntity<CityModel>(cityService.saveCity(city), HttpStatus.OK);
+	@PostMapping("/city")
+	public ResponseEntity<DefaultResponse> saveCity(@Valid @RequestBody CityModel city) {
+		DefaultResponse response = cityService.saveCity(city);
+		return new ResponseEntity<DefaultResponse>(response, response.getStatus());
 	}
 
 	/*
 	 * Permitir deletar uma cidade;
 	 */
-	@DeleteMapping("/deleteCity/{ibgeId}")
-	public ResponseEntity<String> deleteCity(@PathVariable("ibgeId") Long ibgeId) {
-		LOG.info("deleting a city");
-		return new ResponseEntity<String>(cityService.deleteCity(ibgeId), HttpStatus.OK);
+	@DeleteMapping("/city/{ibgeId}")
+	public ResponseEntity<DefaultResponse> deleteCity(@PathVariable("ibgeId") Long ibgeId) {
+		DefaultResponse response = cityService.deleteCity(ibgeId);
+		return new ResponseEntity<DefaultResponse>(response, response.getStatus());
 	}
 
 	/*
 	 * Permitir selecionar uma coluna (do CSV) e através dela entrar com uma string
 	 * para filtrar. retornar assim todos os objetos que contenham tal string;
+	 * http://localhost:8080/filter?a=ibgeId&b=1200336 (required = false)
 	 */
 
-//	@GetMapping("/citiesByColumn/{column}/{filter}")
-//	public ResponseEntity<CitiesResponse> getCitiesByColumn(@PathVariable("column") String column,
-//			@PathVariable("filter") String filter) {
-//		LOG.info("Load cities by uf.");
-//		List<CityModel> cities = cityService.getCitiesByUf(uf);
-//		CitiesResponse response = new CitiesResponse("Cities of " + uf, cities);
-//		return new ResponseEntity<CitiesResponse>(response, HttpStatus.OK);
-//	}
+	@GetMapping("/filter")
+    public Page<CityModel> list(@RequestParam Map<String, String> filters,
+                             @RequestParam(defaultValue = "0") Integer page,
+                             @RequestParam(defaultValue = "10") Integer size) {
+        return cityService.list(filters,  PageRequest.of(page, size));
+    }
 
 	/*
 	 * Retornar a quantidade de registro baseado em uma coluna. Não deve contar
@@ -135,11 +130,9 @@ public class CityContoller {
 	/*
 	 * Retornar a quantidade de registros total
 	 */
-	@GetMapping("/totalRecords")
-	public ResponseEntity<String> getTotalRecords() {
-		LOG.info("Counting cities records.");
-		String ret = cityService.getTotalRecords() + ": is the total of city records";
-		return new ResponseEntity<String>(ret, HttpStatus.OK);
+	@GetMapping("/total-records")
+	public ResponseEntity<DefaultResponse> getTotalRecords() {
+		return new ResponseEntity<DefaultResponse>(cityService.getTotalRecords(), HttpStatus.OK);
 
 	}
 
@@ -147,11 +140,18 @@ public class CityContoller {
 	 * Dentre todas as cidades, obter as duas cidades mais distantes uma da outra
 	 * com base na localização (distância em KM em linha reta);
 	 */
-	@GetMapping("/greaterDistance")
-	public ResponseEntity<String> getGreaterDistance() {
-		String ret = cityService.getGreaterDistance();
-		return new ResponseEntity<String>(ret, HttpStatus.OK);
+	@GetMapping("/greater-distance")
+	public ResponseEntity<DefaultResponse> getGreaterDistance() {
+		DefaultResponse response = cityService.getGreaterDistance();
+		return new ResponseEntity<DefaultResponse>(response, response.getStatus());
 
 	}
+	
+//	@GetMapping("/greater-distance2")
+//	public ResponseEntity<DefaultResponse> getGreaterDistance2() {
+//		DefaultResponse response = cityService.getGreaterDistance2();
+//		return new ResponseEntity<DefaultResponse>(response, response.getStatus());
+//
+//	}
 
 }

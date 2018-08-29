@@ -13,6 +13,9 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import lombok.Data;
+
+@Data
 @Entity
 @Table(name = "cities")
 @EntityListeners(AuditingEntityListener.class)

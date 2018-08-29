@@ -11,7 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.xpto.cities.model.CityModel;
 import com.xpto.cities.repository.CityRepository;
-import com.xpto.cities.service.CityService;
+import com.xpto.cities.service.ICityService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -20,7 +20,7 @@ public class CityTests {
 	@Autowired
 	private CityRepository repo;
 	@Autowired
-	private CityService serv;
+	private ICityService serv;
 
 	@Test
 	public void repositoryTest() {
@@ -46,10 +46,6 @@ public class CityTests {
 		return city;
 	}
 
-	@SuppressWarnings("unused")
-	private List<CityModel> getCapitais() {
-		return serv.findCapitals();
-	}
 	@SuppressWarnings("unused")
 	private List<CityModel> findAll() {
 		return serv.findAll();
