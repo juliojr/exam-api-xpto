@@ -2,6 +2,7 @@ package com.xpto.cities.service;
 
 import static com.xpto.cities.specification.CitySpecification.filterWithOptions;
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,6 +15,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.xpto.cities.dto.GreaterDistanceDto;
+import com.xpto.cities.dto.ResumeColumnDto;
 import com.xpto.cities.dto.StateDto;
 import com.xpto.cities.exception.CitiesFileException;
 import com.xpto.cities.exception.DefaultXptoException;
@@ -35,13 +40,60 @@ public class CityService implements ICityService {
 	@Autowired
 	private CityRepository cityRepository;
 
+	@PersistenceContext
+	private EntityManager em;
+
 	public CityRepository getCityRepository() {
 		return cityRepository;
 	}
 
 	@Override
-	public Page<CityModel> list(Map<String, String> filters, Pageable pageable) {
-		return cityRepository.findAll(filterWithOptions(filters), pageable);
+	public Page<CityModel> listSpecifications(Map<String, String> filters, Pageable pageable) {
+		try {
+			return cityRepository.findAll(filterWithOptions(filters), pageable);
+		} catch (Exception e) {
+			throw new DefaultXptoException(e.getMessage(), e, HttpStatus.SERVICE_UNAVAILABLE);
+		}
+	}
+
+	private Object mapColumn(CityModel x, String field) {
+		try {
+			Class<?> clazz = Class.forName("com.xpto.cities.model.CityModel");
+			Field f = clazz.getDeclaredField(field);
+			f.setAccessible(true);
+			Object value = f.get(x);
+			return value;
+		} catch (SecurityException | IllegalArgumentException | ClassNotFoundException | IllegalAccessException e) {
+			throw new DefaultXptoException(e.getMessage(), HttpStatus.BAD_GATEWAY);
+		} catch (NoSuchFieldException e) {
+			throw new DefaultXptoException("this column was not found", HttpStatus.BAD_REQUEST);
+		}
+
+	}
+
+	@Override
+	public DefaultResponse resumeColumn(String column) {
+		try {
+			Long distinctRecords = null;
+			if (column.toLowerCase().equals("capital")) {
+				distinctRecords = (long) cityRepository.findCapitals().size();
+			} else {
+				distinctRecords = (long) cityRepository.findAll().stream().map(x -> {
+					return mapColumn(x, column);
+				}).distinct().collect(Collectors.toList()).size();
+			}
+			ResumeColumnDto rColumn = new ResumeColumnDto(column, distinctRecords);
+			List<Object> columnResume = new ArrayList<>();
+			columnResume.add(rColumn);
+			HttpStatus status = HttpStatus.OK;
+			if (columnResume.isEmpty()) {
+				status = HttpStatus.NO_CONTENT;
+			}
+			return new DefaultResponse(status, "application/json", new Long(columnResume.size()), columnResume);
+		} catch (DefaultXptoException e) {
+			throw new DefaultXptoException(e.getMessage(), e, e.getStatus());
+		}
+
 	}
 
 	@Override
@@ -57,7 +109,7 @@ public class CityService implements ICityService {
 	@Override
 	public List<CityModel> findAll() {
 		try {
-			return cityRepository.findAll();
+			return (List<CityModel>) cityRepository.findAll();
 		} catch (Exception e) {
 			throw new DefaultXptoException(e.getMessage(), e, HttpStatus.SERVICE_UNAVAILABLE);
 		}
@@ -213,7 +265,7 @@ public class CityService implements ICityService {
 
 		try {
 
-			List<CityModel> cities = cityRepository.findAll();
+			List<CityModel> cities = (List<CityModel>) cityRepository.findAll();
 
 			double greaterDistanceKm = 0;
 			CityModel cA = null;
@@ -248,7 +300,8 @@ public class CityService implements ICityService {
 	// convert file in list of cities
 	public List<CityModel> getCitiesByFile(MultipartFile file, Path citiesFileLocation) {
 		List<CityModel> cities = null;
-		try (Stream<String> lines = Files.lines(citiesFileLocation.resolve(file.getOriginalFilename().trim()).normalize())) {
+		try (Stream<String> lines = Files
+				.lines(citiesFileLocation.resolve(file.getOriginalFilename().trim()).normalize())) {
 			cities = lines.skip(1).map(mapToCity).collect(Collectors.toList());
 		} catch (Exception e) {
 			throw new CitiesFileException(

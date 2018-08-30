@@ -114,18 +114,20 @@ public class CityContoller {
 	 */
 
 	@GetMapping("/filter")
-    public Page<CityModel> listSpecifications(@RequestParam Map<String, String> filters,
-    		@RequestParam(defaultValue = "0") Integer page,
-    		@RequestParam(defaultValue = "10") Integer size) {
-        return cityService.list(filters,  PageRequest.of(page, size));
-    }
+	public Page<CityModel> listSpecifications(@RequestParam Map<String, String> filters,
+			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
+		return cityService.listSpecifications(filters, PageRequest.of(page, size));
+	}
 
 	/*
 	 * Retornar a quantidade de registro baseado em uma coluna. Não deve contar
 	 * itens iguais;
 	 */
-
-	// public
+	@GetMapping("/filter/{column}")
+	public ResponseEntity<DefaultResponse> numberRecordsColumn(@PathVariable("column") String column) {
+		DefaultResponse response = cityService.resumeColumn(column);
+		return new ResponseEntity<DefaultResponse>(response, response.getStatus());
+	}
 
 	/*
 	 * Retornar a quantidade de registros total
@@ -146,6 +148,5 @@ public class CityContoller {
 		return new ResponseEntity<DefaultResponse>(response, response.getStatus());
 
 	}
-	
 
 }

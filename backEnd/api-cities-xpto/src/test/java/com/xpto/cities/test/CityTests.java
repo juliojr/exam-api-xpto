@@ -32,8 +32,12 @@ public class CityTests {
 		// List<CityModel> cities = findAll();
 		// List<CityModel> cities = getCapitais();
 		// List<CityModel> cities = repo.findAll();
-		testGreaterDistanceWithStream();
+		// testGreaterDistanceWithStream();
+		
+		System.out.println(serv.resumeColumn("uf").toString());
+
 	}
+	
 
 	@SuppressWarnings("unused")
 	private CityModel createCity() {
@@ -50,9 +54,10 @@ public class CityTests {
 		return city;
 	}
 
+	@SuppressWarnings("unused")
 	private void testGreaterDistanceWithStream() {
-		// test with stream it is slower than intelligent for implemented 
-		List<CityModel> cities = repo.findAll();
+		// test with stream it is slower than intelligent for implemented
+		List<CityModel> cities = (List<CityModel>) repo.findAll();
 
 		List<GreaterDistanceDto> ds = cities.parallelStream()
 				.flatMap(c -> cities.stream().filter(c1 -> !c.equals(c1)).map(x -> {

@@ -4,8 +4,8 @@ import org.springframework.http.HttpStatus;
 
 public class ErrorResponse {
 
-	public HttpStatus status;
-	public String message;
+	private HttpStatus status;
+	private String message;
 
 	public ErrorResponse(HttpStatus status,  String message) {
 		super();

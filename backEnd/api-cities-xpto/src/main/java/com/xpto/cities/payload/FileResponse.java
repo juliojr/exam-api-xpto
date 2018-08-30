@@ -3,12 +3,11 @@ package com.xpto.cities.payload;
 import org.springframework.http.HttpStatus;
 
 public class FileResponse {
+	
 	private HttpStatus status;
 	private String message;
 	private String fileType;
 	private long size;
-
-	
 
 	public FileResponse(HttpStatus status, String message, String fileType, long size) {
 		super();
@@ -49,5 +48,5 @@ public class FileResponse {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	
+
 }

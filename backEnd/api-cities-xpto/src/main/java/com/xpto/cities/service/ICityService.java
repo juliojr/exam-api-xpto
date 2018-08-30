@@ -16,7 +16,9 @@ public interface ICityService {
 
 	CityRepository getCityRepository();
 
-	Page<CityModel> list(Map<String, String> filters, Pageable pageable);
+	Page<CityModel> listSpecifications(Map<String, String> filters, Pageable pageable);
+
+	DefaultResponse resumeColumn(String column);
 
 	void saveAllCities(List<CityModel> cities);
 

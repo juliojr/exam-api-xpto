@@ -10,10 +10,10 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonInclude(Include.NON_NULL)
 public class DefaultResponse {
 
-	public HttpStatus status;
-	public String type;
-	public Long records;
-	public List<Object> data;
+	private HttpStatus status;
+	private String type;
+	private Long records;
+	private List<Object> data;
 
 	public DefaultResponse(HttpStatus status, String type, Long records, List<Object> data) {
 		super();
