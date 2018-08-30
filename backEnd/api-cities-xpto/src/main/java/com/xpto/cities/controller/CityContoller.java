@@ -24,6 +24,10 @@ import com.xpto.cities.payload.FileResponse;
 import com.xpto.cities.service.ICitiesFileService;
 import com.xpto.cities.service.ICityService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+@Api
 @RestController
 public class CityContoller {
 
@@ -36,6 +40,7 @@ public class CityContoller {
 	/*
 	 * Ler o arquivo CSV das cidades para a base de dados
 	 */
+	@ApiOperation(value = "Ler o arquivo CSV das cidades para a base de dados")
 	@PostMapping("/upload")
 	public ResponseEntity<FileResponse> uploadFile(@RequestParam("file") MultipartFile file) {
 		return new ResponseEntity<FileResponse>(citiesFileService.storeFile(file), HttpStatus.ACCEPTED);
@@ -44,6 +49,7 @@ public class CityContoller {
 	/*
 	 * Retornar somente as cidades que são capitais ordenadas por nome
 	 */
+	@ApiOperation(value = "Retornar somente as cidades que são capitais ordenadas por nome")
 	@GetMapping("/capital")
 	public ResponseEntity<DefaultResponse> getCapitals() {
 		DefaultResponse response = cityService.findCapitals();
@@ -55,6 +61,7 @@ public class CityContoller {
 	 * Retornar o nome do estado com a maior e menor quantidade de cidades e a
 	 * quantidade de cidades;
 	 */
+	@ApiOperation(value = "Retornar o nome do estado com a maior e menor quantidade de cidades e a quantidade de cidades")
 	@GetMapping("/largest-smallest-ufs")
 	public ResponseEntity<DefaultResponse> getLargestSmallestUfs() {
 		DefaultResponse response = cityService.getLargestSmallestUfs();
@@ -65,6 +72,7 @@ public class CityContoller {
 	/*
 	 * Retornar a quantidade de cidades por estado;
 	 */
+	@ApiOperation(value = "Retornar a quantidade de cidades por estado")
 	@GetMapping("/number-cities-uf")
 	public ResponseEntity<DefaultResponse> getNumberCitiesUf() {
 		DefaultResponse response = cityService.getNumberCitiesUf();
@@ -74,6 +82,7 @@ public class CityContoller {
 	/*
 	 * Obter os dados da cidade informando o id do IBGE
 	 */
+	@ApiOperation(value = "Obter os dados da cidade informando o id do IBGE")
 	@GetMapping("/city/{ibgeId}")
 	public ResponseEntity<DefaultResponse> getCityByIbge(@PathVariable("ibgeId") Long ibgeId) {
 		DefaultResponse response = cityService.findByIbgeId(ibgeId);
@@ -83,6 +92,7 @@ public class CityContoller {
 	/*
 	 * Retornar o nome das cidades baseado em um estado selecionado;
 	 */
+	@ApiOperation(value = "Retornar o nome das cidades baseado em um estado selecionado")
 	@GetMapping("/uf/{uf}")
 	public ResponseEntity<DefaultResponse> getCitiesByUf(@PathVariable("uf") String uf) {
 		DefaultResponse response = cityService.getCitiesByUf(uf.toUpperCase());
@@ -92,6 +102,7 @@ public class CityContoller {
 	/*
 	 * Permitir adicionar uma nova Cidade
 	 */
+	@ApiOperation(value = "Permitir adicionar uma nova Cidade")
 	@PostMapping("/city")
 	public ResponseEntity<DefaultResponse> saveCity(@Valid @RequestBody CityModel city) {
 		DefaultResponse response = cityService.saveCity(city);
@@ -101,6 +112,7 @@ public class CityContoller {
 	/*
 	 * Permitir deletar uma cidade;
 	 */
+	@ApiOperation(value = "Permitir deletar uma cidade")
 	@DeleteMapping("/city/{ibgeId}")
 	public ResponseEntity<DefaultResponse> deleteCity(@PathVariable("ibgeId") Long ibgeId) {
 		DefaultResponse response = cityService.deleteCity(ibgeId);
@@ -110,9 +122,8 @@ public class CityContoller {
 	/*
 	 * Permitir selecionar uma coluna (do CSV) e através dela entrar com uma string
 	 * para filtrar. retornar assim todos os objetos que contenham tal string;
-	 * http://localhost:8080/filter?a=ibgeId&b=1200336 (required = false)
 	 */
-
+	@ApiOperation(value = "Permitir selecionar uma coluna (do CSV) e através dela entrar com uma string para filtrar. retornar assim todos os objetos que contenham tal string")
 	@GetMapping("/filter")
 	public Page<CityModel> listSpecifications(@RequestParam Map<String, String> filters,
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
@@ -123,6 +134,7 @@ public class CityContoller {
 	 * Retornar a quantidade de registro baseado em uma coluna. Não deve contar
 	 * itens iguais;
 	 */
+	@ApiOperation(value = "Retornar a quantidade de registro baseado em uma coluna. Não deve contar itens iguais")
 	@GetMapping("/filter/{column}")
 	public ResponseEntity<DefaultResponse> numberRecordsColumn(@PathVariable("column") String column) {
 		DefaultResponse response = cityService.resumeColumn(column);
@@ -132,6 +144,7 @@ public class CityContoller {
 	/*
 	 * Retornar a quantidade de registros total
 	 */
+	@ApiOperation(value = "Retornar a quantidade de registros total")
 	@GetMapping("/total-records")
 	public ResponseEntity<DefaultResponse> getTotalRecords() {
 		return new ResponseEntity<DefaultResponse>(cityService.getTotalRecords(), HttpStatus.OK);
@@ -142,6 +155,7 @@ public class CityContoller {
 	 * Dentre todas as cidades, obter as duas cidades mais distantes uma da outra
 	 * com base na localização (distância em KM em linha reta);
 	 */
+	@ApiOperation(value = " Dentre todas as cidades, obter as duas cidades mais distantes uma da outra com base na localização (distância em KM em linha reta);")
 	@GetMapping("/greater-distance")
 	public ResponseEntity<DefaultResponse> getGreaterDistance() {
 		DefaultResponse response = cityService.getGreaterDistance();
