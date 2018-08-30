@@ -11,6 +11,8 @@ Os Scripts da part2 estão escritos em Azul e tambem dentro do aquivo script_pls
 
 #api-cities-xpto
 
+http://localhost:8080/swagger-ui.html#/city-controller
+
 RETURN TOKEN 
 
 POST http://localhost:8080/oauth/token
