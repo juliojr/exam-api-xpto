@@ -114,9 +114,9 @@ public class CityContoller {
 	 */
 
 	@GetMapping("/filter")
-    public Page<CityModel> list(@RequestParam Map<String, String> filters,
-                             @RequestParam(defaultValue = "0") Integer page,
-                             @RequestParam(defaultValue = "10") Integer size) {
+    public Page<CityModel> listSpecifications(@RequestParam Map<String, String> filters,
+    		@RequestParam(defaultValue = "0") Integer page,
+    		@RequestParam(defaultValue = "10") Integer size) {
         return cityService.list(filters,  PageRequest.of(page, size));
     }
 
@@ -147,11 +147,5 @@ public class CityContoller {
 
 	}
 	
-//	@GetMapping("/greater-distance2")
-//	public ResponseEntity<DefaultResponse> getGreaterDistance2() {
-//		DefaultResponse response = cityService.getGreaterDistance2();
-//		return new ResponseEntity<DefaultResponse>(response, response.getStatus());
-//
-//	}
 
 }

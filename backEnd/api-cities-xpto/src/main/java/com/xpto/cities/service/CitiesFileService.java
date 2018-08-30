@@ -39,7 +39,6 @@ public class CitiesFileService implements ICitiesFileService {
 	public FileResponse storeFile(MultipartFile file) {
 		// Normalize file name
 		String fileName = StringUtils.cleanPath(file.getOriginalFilename().trim());
-
 		try {
 			// Check if the file's name contains invalid characters
 			if (fileName.contains("..")) {
@@ -56,20 +55,17 @@ public class CitiesFileService implements ICitiesFileService {
 
 			// trasform file in a List
 			List<CityModel> cities = cityService.getCitiesByFile(file, this.citiesFileLocation);
-			
-			//Save
-			//cityService.getCityRepository().deleteAll();
-			
+
+			// Save
+			// cityService.getCityRepository().deleteAll();
 			cityService.saveAllCities(cities);
-			
+
 			// Delete file
 			Files.delete(this.citiesFileLocation.resolve(file.getOriginalFilename().trim()).normalize());
 
 			FileResponse response = new FileResponse(HttpStatus.ACCEPTED, "Uploaded And Saved Successful",
 					file.getContentType(), file.getSize());
-
 			return response;
-
 		} catch (Exception ex) {
 			throw new CitiesFileException(ex.getMessage(), ex);
 		}

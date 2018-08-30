@@ -42,4 +42,5 @@ public interface ICityService {
 
 	List<CityModel> getCitiesByFile(MultipartFile file, Path citiesFileLocation);
 
+	double getDistance(double lat1, double lon1, double lat2, double lon2, String unit);
 }

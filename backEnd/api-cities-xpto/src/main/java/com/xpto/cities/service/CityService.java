@@ -191,7 +191,7 @@ public class CityService implements ICityService {
 	}
 
 	// return distance of 2 cities
-	private double getDistance(double lat1, double lon1, double lat2, double lon2, String unit) {
+	public double getDistance(double lat1, double lon1, double lat2, double lon2, String unit) {
 		double theta = lon1 - lon2;
 		double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2))
 				+ Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
@@ -248,8 +248,7 @@ public class CityService implements ICityService {
 	// convert file in list of cities
 	public List<CityModel> getCitiesByFile(MultipartFile file, Path citiesFileLocation) {
 		List<CityModel> cities = null;
-		try (Stream<String> lines = Files
-				.lines(citiesFileLocation.resolve(file.getOriginalFilename().trim()).normalize())) {
+		try (Stream<String> lines = Files.lines(citiesFileLocation.resolve(file.getOriginalFilename().trim()).normalize())) {
 			cities = lines.skip(1).map(mapToCity).collect(Collectors.toList());
 		} catch (Exception e) {
 			throw new CitiesFileException(

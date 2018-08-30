@@ -5,12 +5,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.data.jpa.domain.Specification;
-
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+
+import org.springframework.data.jpa.domain.Specification;
 
 import com.xpto.cities.model.CityModel;
 
@@ -47,6 +47,7 @@ public class CitySpecification {
 			if (Collection.class.isAssignableFrom(CityModel.class.getDeclaredField(compositeField[0]).getType())) {
 				Join<Object, Object> join = root.join(compositeField[0]);
 				predicates.add(criteriaBuilder.equal(join.get(compositeField[1]), params.get(field)));
+
 			}
 		} else if (CityModel.class.getDeclaredField(compositeField[0]).getType()
 				.getDeclaredField(compositeField[1]) != null) {
