@@ -1,7 +1,7 @@
 # exam-api-xpto
 
 O desafio Back-End é uma api desenvolvida com Spring e banco de dados Postgres
-Esta dentro da pasta "backEnd" com o nome de api-cities-xpto
+Esta dentro da pasta api-cities-xpto
 
 A avaliação de Banco de Dados PL SQL, esta dentro da pasta "plsql" com os arquivos conforme solicitado.
 
@@ -10,6 +10,8 @@ Os Scripts da part2 estão escritos em Azul e tambem dentro do aquivo script_pls
 
 
 #api-cities-xpto
+
+testes locais
 
 http://localhost:8080/swagger-ui.html#/city-controller
 
