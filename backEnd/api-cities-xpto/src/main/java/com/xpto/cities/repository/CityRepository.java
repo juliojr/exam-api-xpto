@@ -5,10 +5,12 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import com.xpto.cities.dto.StateDto;
 import com.xpto.cities.model.CityModel;
 
+@Repository
 public interface CityRepository extends JpaRepository<CityModel, Long>, JpaSpecificationExecutor<CityModel> {
 
 	@Query("select c from CityModel c where c.capital = 'true'")
